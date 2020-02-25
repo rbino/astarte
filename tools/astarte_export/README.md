@@ -1,10 +1,10 @@
 # astarte_export
 
+## ⚠ Warning
+
+This tool is still in alpha phase, don't rely on it for critical migrations.
+
 Astarte Export is an easy to use tool that allows to exporting all the devices and data from an existing Astarte realm to XML format.
-
-
-
-
 
 ```iex
 iex(astarte_export@127.0.0.1)6> Astarte.Export.export_realm_data("test", "test.xml")
