@@ -54,7 +54,6 @@ defmodule Astarte.Pairing.API.Credentials do
 
   def verify_astarte_mqtt_v1(realm, hw_id, secret, params) do
     alias AstarteMQTTV1.Credentials, as: Credentials
-    alias AstarteMQTTV1.CredentialsStatus, as: CredentialsStatus
 
     changeset =
       %Credentials{}
@@ -66,7 +65,7 @@ defmodule Astarte.Pairing.API.Credentials do
            Pairing.verify_astarte_mqtt_v1_credentials(realm, hw_id, secret, %{
              client_crt: client_crt
            }) do
-      {:ok, build_credentials_status(credentials_status_map)}
+      {:ok, build_astarte_mqtt_v1_credentials_status(credentials_status_map)}
     else
       {:error, %Ecto.Changeset{} = changeset} ->
         {:error, changeset}
@@ -82,33 +81,43 @@ defmodule Astarte.Pairing.API.Credentials do
     end
   end
 
-  defp build_credentials_status(%{valid: true, timestamp: timestamp, until: until}) do
-    %CredentialsStatus{
+  defp build_astarte_mqtt_v1_credentials_status(%{valid: true, timestamp: timestamp, until: until}) do
+    %AstarteMQTTV1.CredentialsStatus{
       valid: true,
       timestamp: timestamp,
-      until: until
+      until: until,
+      cause: nil,
+      details: nil
     }
   end
 
-  defp build_credentials_status(%{valid: false, timestamp: timestamp, cause: cause, details: ""}) do
-    %CredentialsStatus{
+  defp build_astarte_mqtt_v1_credentials_status(%{
+         valid: false,
+         timestamp: timestamp,
+         cause: cause,
+         details: ""
+       }) do
+    %AstarteMQTTV1.CredentialsStatus{
       valid: false,
       timestamp: timestamp,
-      cause: cause
+      cause: cause,
+      details: nil,
+      until: nil
     }
   end
 
-  defp build_credentials_status(%{
+  defp build_astarte_mqtt_v1_credentials_status(%{
          valid: false,
          timestamp: timestamp,
          cause: cause,
          details: details
        }) do
-    %CredentialsStatus{
+    %AstarteMQTTV1.CredentialsStatus{
       valid: false,
       timestamp: timestamp,
       cause: cause,
-      details: details
+      details: details,
+      until: nil
     }
   end
 end
