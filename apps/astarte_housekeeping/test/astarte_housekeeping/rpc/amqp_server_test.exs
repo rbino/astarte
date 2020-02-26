@@ -142,6 +142,7 @@ defmodule Astarte.Housekeeping.RPC.HandlerTest do
       |> Call.encode()
 
     expected = %Reply{
+      error: false,
       reply: {:does_realm_exist_reply, %DoesRealmExistReply{exists: true}},
       version: 0
     }
