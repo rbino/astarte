@@ -141,7 +141,10 @@ defmodule Astarte.Housekeeping.RPC.HandlerTest do
       %Call{call: {:does_realm_exist, %DoesRealmExist{realm: @test_realm}}}
       |> Call.encode()
 
-    expected = %Reply{reply: {:does_realm_exist_reply, %DoesRealmExistReply{exists: true}}}
+    expected = %Reply{
+      reply: {:does_realm_exist_reply, %DoesRealmExistReply{exists: true}},
+      version: 0
+    }
 
     {:ok, exists_reply} = Handler.handle_rpc(encoded)
 
