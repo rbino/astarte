@@ -62,20 +62,11 @@ defmodule Astarte.Pairing.API.Credentials do
 
     with {:ok, %Credentials{client_crt: client_crt}} <-
            Ecto.Changeset.apply_action(changeset, :insert),
-         {:ok,
-          %{valid: valid, timestamp: timestamp, cause: cause, until: until, details: details}} <-
+         {:ok, credentials_status_map} <-
            Pairing.verify_astarte_mqtt_v1_credentials(realm, hw_id, secret, %{
              client_crt: client_crt
            }) do
-      credentials_status = %CredentialsStatus{
-        valid: valid,
-        timestamp: timestamp,
-        cause: cause,
-        until: until,
-        details: details
-      }
-
-      {:ok, credentials_status}
+      {:ok, build_credentials_status(credentials_status_map)}
     else
       {:error, %Ecto.Changeset{} = changeset} ->
         {:error, changeset}
@@ -89,5 +80,35 @@ defmodule Astarte.Pairing.API.Credentials do
       {:error, _reason} ->
         {:error, :rpc_error}
     end
+  end
+
+  defp build_credentials_status(%{valid: true, timestamp: timestamp, until: until}) do
+    %CredentialsStatus{
+      valid: true,
+      timestamp: timestamp,
+      until: until
+    }
+  end
+
+  defp build_credentials_status(%{valid: false, timestamp: timestamp, cause: cause, details: ""}) do
+    %CredentialsStatus{
+      valid: false,
+      timestamp: timestamp,
+      cause: cause
+    }
+  end
+
+  defp build_credentials_status(%{
+         valid: false,
+         timestamp: timestamp,
+         cause: cause,
+         details: details
+       }) do
+    %CredentialsStatus{
+      valid: false,
+      timestamp: timestamp,
+      cause: cause,
+      details: details
+    }
   end
 end
