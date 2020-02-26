@@ -100,6 +100,12 @@ defmodule Astarte.Housekeeping.RPC.Handler do
     end
   end
 
+  defp call_rpc({:create_realm, %CreateRealm{replication_factor: 0} = call}) do
+    # Due to new proto3 defaults, if replication factor is not explictly set, it now defaults
+    # to 0 instead of nil. Hide this implementation detail to the outside world.
+    call_rpc({:create_realm, %{call | replication_factor: nil}})
+  end
+
   defp call_rpc(
          {:create_realm,
           %CreateRealm{
