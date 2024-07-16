@@ -67,8 +67,7 @@ defmodule AshScyllaDB.Types.Map do
   def cast_stored(nil, _), do: {:ok, nil}
 
   def cast_stored(value, constraints) do
-    loader = &Ecto.Type.load/2
-    Exandra.Map.load(value, loader, constraints[:params])
+    Exandra.Map.cast(value, constraints[:params])
   end
 
   @impl true

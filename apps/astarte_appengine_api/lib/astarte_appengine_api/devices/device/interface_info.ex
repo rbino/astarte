@@ -38,5 +38,6 @@ defmodule Astarte.AppEngine.API.Devices.Device.InterfaceInfo do
 
   use AshGraphql.Type
 
+  @impl AshGraphql.Type
   def graphql_type(_), do: :interface_info
 end

@@ -1,7 +1,7 @@
 defmodule Astarte.AppEngine.API.Devices.Device.Calculations.Interfaces do
   use Ash.Resource.Calculation
 
-  def load(_opts) do
+  def load(_query, _opts, _context) do
     [
       :introspection,
       :introspection_minor,
@@ -14,7 +14,7 @@ defmodule Astarte.AppEngine.API.Devices.Device.Calculations.Interfaces do
     interface_info_lists =
       records
       |> Enum.map(fn record ->
-        record.introspection_major
+        record.introspection
         |> Enum.map(fn {interface_name, major} ->
           minor = Map.fetch!(record.introspection_minor, interface_name)
 

@@ -7,6 +7,7 @@ defmodule Astarte.AppEngine.API.Devices.Device do
   alias Astarte.AppEngine.API.Devices.Device.Changes
   alias Astarte.AppEngine.API.Devices.Device.Calculations
   alias Astarte.AppEngine.API.Devices.Device.InterfaceInfo
+  alias Astarte.AppEngine.API.Devices.Device.ManualActions
 
   graphql do
     type :device
@@ -33,6 +34,8 @@ defmodule Astarte.AppEngine.API.Devices.Device do
         :first_credentials_request,
         :last_connection,
         :last_disconnection,
+        :last_credentials_request_ip,
+        :last_seen_ip,
         :connected,
         :total_received_msgs,
         :total_received_bytes,
@@ -65,6 +68,10 @@ defmodule Astarte.AppEngine.API.Devices.Device do
         keyset? true
         required? false
       end
+    end
+
+    update :start_deletion do
+      manual ManualActions.StartDeviceDeletion
     end
   end
 
@@ -112,14 +119,13 @@ defmodule Astarte.AppEngine.API.Devices.Device do
       default 0
     end
 
-    # TODO: inet (https://github.com/vinniefranco/exandra/issues/59)
-    # attribute :last_credentials_request_ip, :string do
-    #   public? true
-    # end
+    attribute :last_credentials_request_ip, AshScyllaDB.Types.Inet do
+      public? true
+    end
 
-    # attribute :last_seen_ip, :string do
-    #   public? true
-    # end
+    attribute :last_seen_ip, AshScyllaDB.Types.Inet do
+      public? true
+    end
 
     attribute :attributes, AshScyllaDB.Types.Map do
       public? true
@@ -174,6 +180,10 @@ defmodule Astarte.AppEngine.API.Devices.Device do
 
   calculations do
     calculate :device_id, :string, Calculations.DeviceId do
+      public? true
+    end
+
+    calculate :deletion_in_progress, :boolean, Calculations.DeletionInProgress do
       public? true
     end
 

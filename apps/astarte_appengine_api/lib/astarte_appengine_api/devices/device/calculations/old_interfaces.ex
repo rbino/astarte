@@ -1,7 +1,7 @@
 defmodule Astarte.AppEngine.API.Devices.Device.Calculations.OldInterfaces do
   use Ash.Resource.Calculation
 
-  def load(_opts) do
+  def load(_query, _opts, _context) do
     [
       :old_introspection,
       :exchanged_bytes_by_interface,
